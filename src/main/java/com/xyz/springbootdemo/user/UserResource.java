@@ -2,6 +2,7 @@ package com.xyz.springbootdemo.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -26,8 +27,15 @@ public class UserResource {
         return user;
     }
 
+    @DeleteMapping("/users/{id}")
+    public void deleteUser(@PathVariable int id) {
+        User user = service.deleteUserById(id);
+        if (user == null)
+            throw new UserNotFoundException("Id-" + id);
+    }
+
     @PostMapping("/users")
-    public ResponseEntity<Object> createUser(@RequestBody User user) {
+    public ResponseEntity<Object> createUser(@Validated @RequestBody User user) {
         User savedUsers = service.Save(user);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
